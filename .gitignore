@@ -4,7 +4,6 @@ parser
 
 # Generated files
 *.dot
-*.png
 *.onnx.data
 
 # System
