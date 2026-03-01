@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstddef>
 #include <string>
 #include <fstream>
@@ -41,6 +43,7 @@ public:
     // функция для просмотра текущего байта 
     uint8_t watch_cur_byte()
     {
+        if (cur_index >= size) return 0;
         return byte_vector[cur_index];
     }
 
@@ -53,47 +56,6 @@ public:
         return cur_byte;
     }
 
-    # if 0
-    // прочитать varint
-    uint64_t read_varint()
-    {
-        std::vector<std::string> result_vector;
-
-        bool read = true;
-
-        while (read)
-        {
-            uint8_t cur_byte = byte_vector[cur_index];
-            std::bitset<8> binary(cur_byte);
-            std::string binaryStr = binary.to_string();
-
-            if (binaryStr[0] == '0')
-            {
-                cur_index++;
-                read = false;
-            }
-
-            else
-            {
-                cur_index++;
-                read = true;
-            }
-
-            binaryStr.erase(0, 1); // удалили бит продолжения
-            result_vector.push_back(binaryStr);
-        }
-
-        std::string res_str;
-        for (size_t i = result_vector.size() - 1; i > 0; i--)
-        {
-            res_str += result_vector[i];
-        }
-        res_str += result_vector[0];
-
-        std::bitset<64> bits(res_str);
-        return bits.to_ullong();
-    }
-    #endif
 
     // прочитать varint
     uint64_t read_varint()
@@ -111,27 +73,13 @@ public:
             if (shift >= 64) throw std::runtime_error("Varint too long");
         }
 
+        if (cur_index > 0) cur_index--;
         throw std::runtime_error("Unexpected EOF while reading varint");
     }
 
-    # if 0
-    // функция для чтения n битов подряд 
-    std::vector<uint8_t> read_bytes(int n)
-    {
-        if (cur_index + n > size) throw std::out_of_range("Unexpected EOF");
-        std::vector<uint8_t> data;
 
-        for (int i = 0; i < n; i++)
-        {
-            data.push_back(byte_vector[cur_index]);
-            cur_index++;
-        }
-
-        return data;
-    }
-    #endif
-
-    std::vector<uint8_t> read_bytes(size_t n)  // ← size_t, не int
+    // функция считывания n байтов подряд 
+    std::vector<uint8_t> read_bytes(size_t n)  
     {
         if (cur_index + n > size) throw std::out_of_range("Unexpected EOF");
         std::vector<uint8_t> data(byte_vector.begin() + cur_index, 
@@ -154,6 +102,7 @@ public:
         }
     }
 
+    // геттер для текущего индекса
     size_t get_cur_pos()
     {
         return cur_index;

@@ -1,4 +1,21 @@
-echo "venv/" > .gitignore
-echo "__pycache__/" >> .gitignore
-echo "*.pyc" >> .gitignore
-echo ".DS_Store" >> .gitignore
+# Build
+build/
+CMakeCache.txt
+CMakeFiles/
+parser
+
+# Python
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Generated files 
+*.dot
+graph.png
+*.onnx.data
+
+# System
+.DS_Store
+*.swp
+*~
