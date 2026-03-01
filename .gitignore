@@ -1,18 +1,10 @@
 # Build
 build/
-CMakeCache.txt
-CMakeFiles/
 parser
 
-# Python
-venv/
-__pycache__/
-*.pyc
-.pytest_cache/
-
-# Generated files 
+# Generated files
 *.dot
-graph.png
+*.png
 *.onnx.data
 
 # System
