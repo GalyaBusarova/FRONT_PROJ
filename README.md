@@ -1,60 +1,62 @@
 # ONNX Parser
 
-Парсер вычислительных графов нейронных сетей из формата **ONNX** на языке **C++**.
+A parser for neural network computational graphs from the **ONNX** format in **C++**.
 
-Проект реализует структуру данных граф, преобразование ONNX модели в внутренний граф, поддержку основных операций нейронных сетей и визуализацию с помощью GraphViz.
-
----
-
-## Возможности
-
-| Функция | Описание |
-|---------|----------|
-| **Парсинг ONNX** | Чтение бинарного формата (protobuf/varint) |
-| **Граф на C++** | Классы `Graph`, `Node`, `Tensor` |
-| **8+ операций** | Conv, Relu, Gemm, MatMul, Add, Mul, Reshape, Concat |
-| **Атрибуты** | strides, dilations, group, alpha, beta, transB, allowzero, auto_pad |
-| **Визуализация** | Экспорт в GraphViz DOT с цветами и формами |
-| **Тесты** | 3 тестовые модели + CMake testing |
+The project implements a graph data structure, conversion of an ONNX model into an internal graph, support for the main neural network operations, and visualization using GraphViz.
 
 ---
 
-## Требования
+## Features
 
-| Компонент | Версия | Зачем |
-|-----------|--------|-------|
-| C++ компилятор | C++17 (GCC 7+, Clang 5+, AppleClang 15+) | Сборка проекта |
-| CMake | 3.10+ | Система сборки |
-| GraphViz | Любая  | Визуализация графа |
+| Feature | Description |
+|---------|-------------|
+| **ONNX Parsing** | Reading the binary format (protobuf/varint) |
+| **Graph in C++** | Classes `Graph`, `Node`, `Tensor` |
+| **8+ operations** | Conv, Relu, Gemm, MatMul, Add, Mul, Reshape, Concat |
+| **Attributes** | strides, dilations, group, alpha, beta, transB, allowzero, auto_pad |
+| **Visualization** | Export to GraphViz DOT with colors and shapes |
+| **Tests** | 3 test models + CMake testing |
 
-## Cборка
+---
+
+## Requirements
+
+| Component | Version | Purpose |
+|-----------|---------|---------|
+| C++ compiler | C++17 (GCC 7+, Clang 5+, AppleClang 15+) | Building the project |
+| CMake | 3.10+ | Build system |
+| GraphViz | Any | Graph visualization |
+
+## Build
 
 ```bash
-# 1. Создайте папку build
+# 1. Create the build folder
 mkdir -p build && cd build
 
-# 2. Запустите CMake
+# 2. Run CMake
 cmake ..
 
-# 3. Соберите проект
+# 3. Build the project
 make
 
-# 4. Запустите тесты
+# 4. Run the tests
 ctest --verbose
 ```
-## Запуск
+
+## Run
 
 ```bash
-# Базовый запуск
+# Basic run
 ./parser path/to/model.onnx
 
-# Примеры с тестовыми моделями
+# Examples with test models
 ./parser ../tests/simple_matmul.onnx
 ./parser ../tests/complex_net.onnx
 ./parser ../tests/custom_net.onnx
 ```
 
-### Пример вывода
+### Example output
+
 ```bash
 === Loading: tests/complex_net.onnx ===
 
@@ -80,77 +82,82 @@ Op: Relu
 ✅ Parsing completed successfully!
 ```
 
-## Поддерживаемые операции и их атрибуты
+## Supported operations and their attributes
 
-| Операция | Атрибуты | Описание |
-|----------|----------|----------|
-| **Conv** | `strides`, `dilations`, `group`, `auto_pad` | Свертка |
-| **Relu** | — | Функция активации |
-| **Gemm** | `alpha`, `beta`, `transA`, `transB` | Полносвязный слой |
-| **MatMul** | — | Умножение матриц |
-| **Add** | — | Поэлементное сложение |
-| **Mul** | — | Поэлементное умножение |
-| **Reshape** | `allowzero` | Изменение формы тензора |
-| **Concat** | `axis` | Конкатенация тензоров |
-| **Shape** | — | Получение формы тензора |
+| Operation | Attributes | Description |
+|-----------|------------|-------------|
+| **Conv** | `strides`, `dilations`, `group`, `auto_pad` | Convolution |
+| **Relu** | — | Activation function |
+| **Gemm** | `alpha`, `beta`, `transA`, `transB` | Fully connected layer |
+| **MatMul** | — | Matrix multiplication |
+| **Add** | — | Element-wise addition |
+| **Mul** | — | Element-wise multiplication |
+| **Reshape** | `allowzero` | Changing the tensor shape |
+| **Concat** | `axis` | Tensor concatenation |
+| **Shape** | — | Getting the tensor shape |
 
+## Project structure
 
-## Структура проекта
 ```bash
 .
-├── CMakeLists.txt          # Конфигурация сборки
-├── README.md               # Документация
-├── .gitignore              # Игнорируемые файлы
+├── CMakeLists.txt          # Build configuration
+├── README.md               # Documentation
+├── .gitignore              # Ignored files
 ├── include/
-│   ├── bin_reader.h        # Чтение байтов и varint
-│   └── parser.h            # Классы Graph, Node, Tensor
+│   ├── bin_reader.h        # Reading bytes and varint
+│   └── parser.h            # Classes Graph, Node, Tensor
 ├── src/
-│   ├── main.cpp            # Точка входа
-│   └── parser.cpp          # Реализация парсера
+│   ├── main.cpp            # Entry point
+│   └── parser.cpp          # Parser implementation
 └── tests/
-    ├── simple_matmul.onnx  # Тест 1: Базовый MatMul
-    ├── complex_net.onnx    # Тест 2: CNN + FC слои
-    └── custom_net.onnx     # Тест 3: Реальная модель
+    ├── simple_matmul.onnx  # Test 1: Basic MatMul
+    ├── complex_net.onnx    # Test 2: CNN + FC layers
+    └── custom_net.onnx     # Test 3: Real model
 ```
 
-## Тесты
-Проект включает 3 тестовые модели:
-| Модель | Описание | Операции |
-|--------|----------|----------|
-| `simple_matmul.onnx` | Простое умножение матриц | `MatMul` |
-| `complex_net.onnx` | CNN + Fully Connected | `Conv`, `Relu`, `Reshape`, `Gemm` |
-| `custom_net.onnx` | Реальная модель | `Conv`, `Relu`, `Add`, `Mul`, `Gemm` |
+## Tests
 
-### Запуск тестов
+The project includes 3 test models:
+
+| Model | Description | Operations |
+|-------|-------------|------------|
+| `simple_matmul.onnx` | Simple matrix multiplication | `MatMul` |
+| `complex_net.onnx` | CNN + Fully Connected | `Conv`, `Relu`, `Reshape`, `Gemm` |
+| `custom_net.onnx` | Real model | `Conv`, `Relu`, `Add`, `Mul`, `Gemm` |
+
+### Running the tests
+
 ```bash
 cd build
 ctest --verbose
 ```
 
-## Архитектура
-### Классы
-| Класс | Описание |
-|-------|----------|
-| **BinaryReader** | Низкоуровневое чтение байтов и varint |
-| **Tensor** | Хранение тензора (имя, размеры, тип, данные) |
-| **Node** | Операция графа (тип, входы, выходы, атрибуты) |
-| **Graph** | Вычислительный граф (узлы, тензоры, входы, выходы) |
-| **ONNXParser** | Главный парсер (чтение ONNX → Graph) |
+## Architecture
 
-### Формат ONNX
-ONNX использует protobuf сериализацию:
-Varint — кодирование целых чисел переменной длины
-Wire types — типы полей (0=varint, 2=length-delimited, 5=fixed32)
-Field numbers — идентификаторы полей протокола
+### Classes
 
-## Визуализация графа
+| Class | Description |
+|-------|-------------|
+| **BinaryReader** | Low-level reading of bytes and varint |
+| **Tensor** | Tensor storage (name, dimensions, type, data) |
+| **Node** | Graph operation (type, inputs, outputs, attributes) |
+| **Graph** | Computational graph (nodes, tensors, inputs, outputs) |
+| **ONNXParser** | Main parser (reading ONNX → Graph) |
 
-Пример работы парсера на модели `custom_net.onnx`:
+### ONNX format
 
-![Граф нейросети](images/graph.png)
+ONNX uses protobuf serialization:
 
-## Автор
+- Varint — variable-length integer encoding
+- Wire types — field types (0=varint, 2=length-delimited, 5=fixed32)
+- Field numbers — protocol field identifiers
 
-**Галина Бусарова**
+## Graph visualization
 
-Проект выполнен в рамках курса по тензорным компиляторам.
+Example of the parser working on the `custom_net.onnx` model:
+
+![Neural network graph](images/graph.png)
+
+## Author
+
+**Galina Busarova**
